@@ -1,9 +1,0 @@
-# This file is machine-generated - editing it directly is not advised
-
-julia_version = "1.7.0-beta2"
-manifest_format = "2.0"
-
-[[deps.BioSymbols]]
-git-tree-sha1 = "ee29c634d82f4c5a5699b10a8984568f7451af94"
-uuid = "3c28c6f8-a34d-59c4-9654-267d177fcfa9"
-version = "5.0.0"
