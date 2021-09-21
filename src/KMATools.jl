@@ -5,7 +5,7 @@ Package for parsing various files produced by KMA. Tested on KMA 1.3.22.
 """
 module KMATools
 
-using BioSymbols
+using BioSymbols: DNA
 
 imap(f) = x -> Iterators.map(f, x)
 ifilter(f) = x -> Iterators.filter(f, x)
@@ -151,8 +151,8 @@ function split!(v::Vector{SubString{String}}, s::Union{String, SubString{String}
             start = i + 1
         end
     end
+    n + 1 != length(v) && error("Incorrect number of fields for split!")
     @inbounds v[n+1] = SubString(s, start, ncodeunits(s))
-    n + 1 < length(v) && error("not enough fields for split!")
     v
 end
 
