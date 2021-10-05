@@ -60,10 +60,10 @@ function parse_spa(io::IO, path::String)
             length(fields) != 13 && error("Expected 13 fields in file \"$path\", line \"$line_number\"")
             return (;
                 template    = String(fields[1]),
-                num         = parse(UInt, fields[2]),
-                score       = parse(UInt, fields[3]),
-                expected    = parse(UInt, fields[4]),
-                tlen        = parse(UInt, fields[5]),
+                num         = parse(UInt, fields[2], base=10),
+                score       = parse(UInt, fields[3], base=10),
+                expected    = parse(UInt, fields[4], base=10),
+                tlen        = parse(UInt, fields[5], base=10),
                 qcov        = round(parse(Float64, fields[6]) / 100, digits=6),
                 tcov        = round(parse(Float64, fields[7]) / 100, digits=6),
                 depth       = parse(Float64, fields[8]),
@@ -124,9 +124,9 @@ function parse_res(io::IO, path::String)
             length(fields) != 11 && error("Expected 11 fields in file \"$path\", line \"$line_number\"")
             return (;
                 template = String(fields[1]),
-                score    = parse(UInt, fields[2]),
-                expected = parse(UInt, fields[3]),
-                tlen     = parse(UInt, fields[4]),
+                score    = parse(UInt, fields[2], base=10),
+                expected = parse(UInt, fields[3], base=10),
+                tlen     = parse(UInt, fields[4], base=10),
                 tid      = round(parse(Float64, fields[5]) / 100, digits=6),
                 tcov     = round(parse(Float64, fields[6]) / 100, digits=6),
                 qid      = round(parse(Float64, fields[7]) / 100, digits=6),
@@ -187,9 +187,9 @@ function parse_mat(io::IO, path::String)
             error("Multi-character reference nucleotide in file \"$path\"")
         end
         refnuc = DNA(first(first(line)))
-        depth_tuple = ntuple(i -> parse(UInt32, @inbounds fields[i+1]), Val(6))
+        depth_tuple = ntuple(i -> parse(UInt32, @inbounds fields[i+1], base=10), Val(6))
         @inbounds for i in 1:6
-            linedepths[i] = parse(UInt32, fields[i+1])
+            linedepths[i] = parse(UInt32, fields[i+1], base=10)
         end
         push!(current, (refnuc, depth_tuple))
     end
