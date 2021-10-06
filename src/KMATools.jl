@@ -52,12 +52,11 @@ function parse_spa(io::IO, path::String)
         end
         header
     end
+    fields = fill(SubString("", 1:0), 13)
     counted_lines |> 
-        imap(i -> (first(i), strip(last(i)))) |>
-        ifilter(i -> !isempty(last(i))) |>
+        ifilter(i -> !isempty(strip(last(i)))) |>
         imap() do (line_number, line)
-            fields = split(line, '\t')
-            length(fields) != 13 && error("Expected 13 fields in file \"$path\", line \"$line_number\"")
+            strip_split!(fields, line, UInt8('\t'))
             return (;
                 template    = String(fields[1]),
                 num         = parse(UInt, fields[2], base=10),
@@ -116,12 +115,11 @@ function parse_res(io::IO, path::String)
         end
         header
     end
+    fields = fill(SubString("", 1:0), 11)
     counted_lines |>
-        imap(i -> (first(i), strip(last(i)))) |>
-        ifilter(i -> !isempty(last(i))) |>
+        ifilter(i -> !isempty(strip(last(i)))) |>
         imap() do (line_number, line)
-            fields = split(line, '\t')
-            length(fields) != 11 && error("Expected 11 fields in file \"$path\", line \"$line_number\"")
+            strip_split!(fields, line, UInt8('\t'))
             return (;
                 template = String(fields[1]),
                 score    = parse(UInt, fields[2], base=10),
@@ -139,7 +137,7 @@ function parse_res(io::IO, path::String)
     collect
 end
 
-function split!(v::Vector{SubString{String}}, s::Union{String, SubString{String}}, sep::UInt8)
+function strip_split!(v::Vector{SubString{String}}, s::Union{String, SubString{String}}, sep::UInt8)
     n = 0
     start = 1
     @inbounds for i in 1:ncodeunits(s)
@@ -147,12 +145,12 @@ function split!(v::Vector{SubString{String}}, s::Union{String, SubString{String}
             n += 1
             n >= length(v) && throw(BoundsError(v, n+1))
             substr = SubString(s, start, i-1)
-            v[n] = substr
+            v[n] = strip(substr)
             start = i + 1
         end
     end
-    n + 1 != length(v) && error("Incorrect number of fields for split!")
-    @inbounds v[n+1] = SubString(s, start, ncodeunits(s))
+    n + 1 != length(v) && error("Incorrect number of fields for strip_split!")
+    @inbounds v[n+1] = strip(SubString(s, start, ncodeunits(s)))
     v
 end
 
@@ -182,7 +180,7 @@ function parse_mat(io::IO, path::String)
             continue
         end
         isnothing(header) && error("Expected header in file \"$path\"")
-        split!(fields, line, UInt8('\t'))
+        strip_split!(fields, line, UInt8('\t'))
         if ncodeunits(first(fields)) != 1
             error("Multi-character reference nucleotide in file \"$path\"")
         end
