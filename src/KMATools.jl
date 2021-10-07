@@ -185,7 +185,7 @@ function parse_mat(io::IO, path::String)
             error("Multi-character reference nucleotide in file \"$path\"")
         end
         refnuc = DNA(first(first(line)))
-        depth_tuple = ntuple(i -> parse(UInt32, @inbounds fields[i+1], base=10), Val(6))
+        depth_tuple = ntuple(i -> parse(UInt32, @inbounds(fields[i+1]), base=10), Val(6))
         @inbounds for i in 1:6
             linedepths[i] = parse(UInt32, fields[i+1], base=10)
         end
