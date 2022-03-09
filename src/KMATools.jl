@@ -166,8 +166,8 @@ function parse_mat(io::IO, path::String)
     rowT = Tuple{DNA, NTuple{6, UInt32}}
     result = Vector{Tuple{String, Vector{rowT}}}()
     current = Vector{rowT}()
-    fields = Vector{SubString{String}}(undef, 7)
-    linedepths = Vector{UInt32}(undef, 6)
+    fields = fill(SubString("", 1, 0), 7)
+    linedepths = fill(UInt32(0), 6)
     header = nothing
     for line in eachline(io) |> imap(strip) |> ifilter(!isempty)
         if startswith(line, '#')
